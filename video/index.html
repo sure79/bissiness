@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><title>하루안부 사용 장면</title>
+<style>
+@font-face{font-family:NKL;src:url(fonts/la-400.woff2);font-weight:400}
+@font-face{font-family:NKL;src:url(fonts/la-500.woff2);font-weight:500}
+@font-face{font-family:NKL;src:url(fonts/la-700.woff2);font-weight:700}
+@font-face{font-family:NKL;src:url(fonts/la-900.woff2);font-weight:900}
+@font-face{font-family:NK;src:url(fonts/kr-400.woff2);font-weight:400}
+@font-face{font-family:NK;src:url(fonts/kr-500.woff2);font-weight:500}
+@font-face{font-family:NK;src:url(fonts/kr-700.woff2);font-weight:700}
+@font-face{font-family:NK;src:url(fonts/kr-900.woff2);font-weight:900}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#000;width:1920px;height:1080px;overflow:hidden}
+body{font-family:NKL,NK,sans-serif;color:#1D2633;-webkit-font-smoothing:antialiased}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:#FFF5EA}
+.scene{position:absolute;left:0;top:0;width:1920px;height:1080px;opacity:0;overflow:hidden}
+.abs{position:absolute}
+.full{left:0;top:0;width:100%;height:100%}
+.ctr{text-align:center;left:0;width:1920px}
+#capwrap{position:absolute;left:0;right:0;bottom:64px;display:flex;justify-content:center;z-index:100;pointer-events:none}
+#cap{background:rgba(22,30,46,.86);color:#fff;font-size:42px;font-weight:700;padding:20px 46px;border-radius:999px;white-space:nowrap;opacity:0;letter-spacing:-.5px}
+.pill{display:inline-flex;align-items:center;gap:10px;background:#fff;border-radius:999px;padding:10px 24px;font-size:26px;font-weight:700;box-shadow:0 8px 24px rgba(20,30,50,.12);white-space:nowrap}
+.panel{position:absolute;border-radius:36px;overflow:hidden;box-shadow:0 30px 60px rgba(60,40,20,.12)}
+/* phone */
+.phone{position:absolute;width:400px;height:820px;background:#15181D;border-radius:62px;padding:14px;box-shadow:0 40px 80px rgba(30,40,60,.28),inset 0 0 0 3px #2C313A}
+.screen{position:relative;width:100%;height:100%;background:#F3F6F4;border-radius:50px;overflow:hidden}
+.screen::before{content:'';position:absolute;left:50%;top:12px;width:116px;height:34px;margin-left:-58px;background:#15181D;border-radius:20px;z-index:30}
+.sbar{position:absolute;top:0;left:0;right:0;height:58px;padding:18px 36px 0;display:flex;justify-content:space-between;font-size:19px;font-weight:700;z-index:29}
+.scr{position:absolute;left:0;right:0;top:58px;bottom:0;padding:14px 22px}
+.apphead{display:flex;align-items:center;gap:12px;font-size:27px;font-weight:900;margin-bottom:16px}
+.card{background:#fff;border-radius:26px;padding:22px;box-shadow:0 6px 20px rgba(0,0,0,.06);margin-bottom:16px}
+.btn{background:#22B07D;color:#fff;border-radius:20px;padding:20px;text-align:center;font-size:23px;font-weight:700}
+.btn.gray{background:#E7ECEA;color:#46525F}
+.btn.red{background:#E5484D}
+.noti{position:absolute;left:12px;right:12px;top:60px;background:rgba(255,255,255,.98);border-radius:26px;padding:16px 18px;display:flex;gap:14px;box-shadow:0 14px 34px rgba(0,0,0,.2);z-index:28;opacity:0}
+.noti .na{font-size:15px;color:#7A8591;font-weight:500}
+.noti .nt{font-size:20px;font-weight:900;margin-top:2px;line-height:1.3}
+.noti .nb{font-size:17px;color:#46525F;margin-top:3px;line-height:1.35}
+.light{width:36px;height:36px;border-radius:50%;background:#C9D1D6;flex:none}
+.stats{display:flex;gap:12px;margin-top:18px}
+.stats>div{flex:1;background:#F3F6F4;border-radius:16px;padding:12px 14px}
+.stats>div>span{display:block;font-size:15px;color:#7A8591;font-weight:500}
+.stats b{font-size:28px;font-weight:900}
+.stt{margin-top:14px;font-size:19px;font-weight:700;color:#22B07D}
+.dbar{position:relative;height:46px;background:#EEF2F0;border-radius:12px;overflow:hidden}
+.tick{position:absolute;top:8px;width:9px;height:30px;border-radius:5px;background:#22B07D;opacity:0}
+.dlab{display:flex;justify-content:space-between;font-size:14px;color:#8A949E;margin-top:8px;font-weight:500}
+.tap{position:absolute;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;background:rgba(30,40,50,.22);border:4px solid rgba(255,255,255,.95);opacity:0;z-index:40}
+.lbl{position:absolute;left:0;right:0;top:-74px;display:flex;justify-content:center}
+.scrn{position:absolute;left:0;right:0;top:0;bottom:0;opacity:0}
+.door{transform-origin:0 50%}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal .h{font-size:14px;color:#8A949E;font-weight:700;padding-bottom:6px}
+.cal .d{height:62px;border-radius:12px;font-size:16px;font-weight:700;padding-top:6px;position:relative}
+.cal .d i{position:absolute;left:50%;top:34px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:#22B07D;opacity:0}
+.stat{position:absolute;width:460px;background:#fff;border-radius:30px;padding:30px 36px;box-shadow:0 20px 40px rgba(20,60,40,.1);opacity:0}
+.stat span{font-size:24px;color:#6B7684;font-weight:700;display:block}
+.stat b{font-size:64px;font-weight:900;color:#1D2633;letter-spacing:-1px}
+.stat small{font-size:24px;color:#22B07D;font-weight:700;margin-left:8px}
+.tog{width:76px;height:44px;border-radius:22px;background:#D5DCD9;position:relative;flex:none}
+.tog i{position:absolute;left:4px;top:4px;width:36px;height:36px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+</style></head>
+<body><div id="stage"><div id="capwrap"><div id="cap"></div></div></div>
+<script>
+/* ---------- helpers ---------- */
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const E={lin:x=>x,out:x=>1-Math.pow(1-x,3),in:x=>x*x*x,io:x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2,
+ back:x=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)}};
+const P=(t,a,b,e=E.io)=>e(clamp((t-a)/(b-a)));
+const L=(t,a,b,v0,v1,e=E.io)=>v0+(v1-v0)*P(t,a,b,e);
+const fio=(t,a,b,d=.4)=>Math.min(P(t,a,a+d,E.lin),1-P(t,b-d,b,E.lin));
+function tf(el,{x=0,y=0,s=1,r=0,o}={}){if(!el)return;el.style.transform=`translate(${x}px,${y}px) rotate(${r}deg) scale(${s})`;if(o!==undefined)el.style.opacity=o}
+const op=(el,o)=>{if(el)el.style.opacity=o};
+function key(t,ks){if(t<=ks[0][0])return ks[0][1];for(let i=1;i<ks.length;i++){if(t<=ks[i][0]){const[a,va]=ks[i-1],[b,vb]=ks[i];return va+(vb-va)*(t-a)/(b-a)}}return ks[ks.length-1][1]}
+const hm=(h,m)=>h*60+m;
+const hhmm=m=>{m=Math.floor(m);return String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0')};
+function lerpC(a,b,p){const A=a.match(/\w\w/g).map(h=>parseInt(h,16)),B=b.match(/\w\w/g).map(h=>parseInt(h,16));return'rgb('+A.map((v,i)=>Math.round(v+(B[i]-v)*p)).join(',')+')'}
+const SKY=[[300,'27345E'],[370,'FFBE8F'],[450,'A9DCFF'],[1020,'A9DCFF'],[1110,'FF9C74'],[1190,'2C3A69'],[1440,'1D2648']];
+function sky(m){for(let i=1;i<SKY.length;i++){if(m<=SKY[i][0]){return lerpC(SKY[i-1][1],SKY[i][1],clamp((m-SKY[i-1][0])/(SKY[i][0]-SKY[i-1][0])))}}return'rgb(29,38,72)'}
+function bez(p0,c,p1,u){const a=(1-u)*(1-u),b=2*(1-u)*u,d=u*u;return[a*p0[0]+b*c[0]+d*p1[0],a*p0[1]+b*c[1]+d*p1[1]]}
+function tap(el,t,t0){if(!el)return;const p=clamp((t-t0)/0.6);const on=t>=t0-0.25&&t<t0+0.6;tf(el,{s:t<t0?L(t,t0-.25,t0,1.3,1):1+p*.5,o:on?(t<t0?P(t,t0-.25,t0):1-p):0})}
+
+/* ---------- art ---------- */
+const MOM={hair:'#C3C5CB',skin:'#F3C9A6',top:'#9B6FB5',bottom:'#5B4A6B',style:'bun',glasses:true};
+const DAU={hair:'#2B211C',skin:'#F5CDAA',top:'#4F7FD9',bottom:'#2F3B57',style:'pony'};
+const NEI={hair:'#6B4630',skin:'#EDC09A',top:'#F08A4B',bottom:'#4B5563',style:'curly'};
+function person(o,w=200,vb='0 0 200 420',extra=''){
+ const{hair,skin,top,bottom,style,glasses,bag,hat}=o;let back='',front='';
+ if(style==='pony'){back=`<ellipse cx="148" cy="96" rx="20" ry="36" fill="${hair}" transform="rotate(-22 148 96)"/>`;front=`<path d="M50 106 Q44 44 100 44 Q158 44 150 106 Q146 76 120 64 Q94 86 54 96 Z" fill="${hair}"/>`}
+ if(style==='bun'){back=`<circle cx="100" cy="44" r="24" fill="${hair}"/>`;front=`<path d="M50 104 Q48 50 100 50 Q152 50 150 104 Q142 72 100 68 Q58 72 50 104Z" fill="${hair}"/>`}
+ if(style==='curly'){front=[[58,84],[70,62],[92,50],[116,52],[136,64],[148,86],[52,104],[150,106]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="20" fill="${hair}"/>`).join('')}
+ const g=glasses?`<g fill="none" stroke="#6A5A52" stroke-width="3"><circle cx="82" cy="106" r="13"/><circle cx="118" cy="106" r="13"/><path d="M95 106h10"/></g>`:'';
+ const bg=bag?`<rect x="38" y="168" width="124" height="128" rx="26" fill="#7C5B3E"/><rect x="62" y="150" width="14" height="40" rx="7" fill="#5E432C"/><rect x="124" y="150" width="14" height="40" rx="7" fill="#5E432C"/>`:'';
+ const ht=hat?`<path d="M46 78 Q100 18 154 78 Z" fill="#E9A23B"/><rect x="30" y="72" width="140" height="13" rx="6" fill="#CF8722"/>`:'';
+ return`<svg viewBox="${vb}" width="${w}" height="${w*(+vb.split(' ')[3])/(+vb.split(' ')[2])}" style="overflow:visible;display:block">${bg}${back}
+ <rect x="72" y="292" width="25" height="108" rx="12" fill="${bottom}"/><rect x="103" y="292" width="25" height="108" rx="12" fill="${bottom}"/>
+ <ellipse cx="82" cy="402" rx="21" ry="9" fill="#3A3A3A"/><ellipse cx="120" cy="402" rx="21" ry="9" fill="#3A3A3A"/>
+ <g class="armL"><rect x="32" y="172" width="26" height="118" rx="13" fill="${top}" transform="rotate(10 45 180)"/><circle cx="34" cy="290" r="14" fill="${skin}"/></g>
+ <g class="armR"><rect x="142" y="172" width="26" height="118" rx="13" fill="${top}" transform="rotate(-10 155 180)"/><circle cx="166" cy="290" r="14" fill="${skin}"/></g>
+ <path d="M56 172 Q100 150 144 172 L152 300 Q100 314 48 300 Z" fill="${top}"/>
+ <rect x="89" y="134" width="22" height="30" rx="6" fill="${skin}"/>
+ <circle cx="100" cy="100" r="48" fill="${skin}"/>${front}
+ <g class="eyes"><ellipse cx="82" cy="108" rx="5" ry="6" fill="#2A2320"/><ellipse cx="118" cy="108" rx="5" ry="6" fill="#2A2320"/></g>
+ <circle cx="70" cy="124" r="7" fill="#F49A8A" opacity=".55"/><circle cx="130" cy="124" r="7" fill="#F49A8A" opacity=".55"/>
+ <path d="M88 126 Q100 136 112 126" fill="none" stroke="#7A3B2E" stroke-width="4" stroke-linecap="round"/>${g}${ht}${extra}</svg>`}
+const face=(o,s)=>`<div style="width:${s}px;height:${s}px;border-radius:50%;overflow:hidden;background:#FFE9D2;flex:none">${person(o,s,'40 30 120 120')}</div>`;
+const logo=s=>`<svg viewBox="0 0 120 120" width="${s}" height="${s}" style="display:block;flex:none"><rect width="120" height="120" rx="30" fill="#22B07D"/><path d="M26 58 L60 30 L94 58 V92 Q94 97 89 97 H31 Q26 97 26 92Z" fill="#fff"/><rect x="50" y="62" width="20" height="35" rx="4" fill="#22B07D"/><circle cx="65" cy="80" r="2.8" fill="#fff"/><circle cx="94" cy="30" r="10" fill="#FFD166"/></svg>`;
+const sbarIcons=`<span style="display:flex;gap:6px;align-items:center"><svg width="26" height="16"><rect x="0" y="10" width="4" height="6" rx="1" fill="#1D2633"/><rect x="7" y="7" width="4" height="9" rx="1" fill="#1D2633"/><rect x="14" y="4" width="4" height="12" rx="1" fill="#1D2633"/><rect x="21" y="0" width="4" height="16" rx="1" fill="#1D2633"/></svg><svg width="30" height="16"><rect x=".5" y=".5" width="25" height="15" rx="4" fill="none" stroke="#1D2633"/><rect x="3" y="3" width="18" height="10" rx="2" fill="#1D2633"/><rect x="27" y="5" width="2" height="6" rx="1" fill="#1D2633"/></svg></span>`;
+const phone=(cls,inner,time='10:24',style='')=>`<div class="phone ${cls}" style="${style}"><div class="screen"><div class="sbar"><span class="ptime">${time}</span>${sbarIcons}</div>${inner}<div class="tap"></div></div></div>`;
+const noti=(t,b,cls='')=>`<div class="noti ${cls}">${logo(46)}<div><div class="na">하루안부 · 지금</div><div class="nt">${t}</div><div class="nb">${b}</div></div></div>`;
+const homeCard=(sub='전주 · 화장실 문 센서')=>`<div class="card"><div style="display:flex;align-items:center;gap:16px">${face(MOM,70)}<div style="flex:1"><div style="font-size:26px;font-weight:900">어머니</div><div style="font-size:16px;color:#7A8591;font-weight:500">${sub}</div></div><div class="light"></div></div>
+ <div class="stats"><div><span>마지막 신호</span><b class="last">--:--</b></div><div><span>오늘 신호</span><b><span class="cnt">0</span>회</b></div></div><div class="stt">아직 신호가 없어요</div></div>`;
+const dayCard=n=>`<div class="card"><div style="font-size:18px;font-weight:700;margin-bottom:14px">오늘의 신호</div><div class="dbar">${Array.from({length:n},()=>'<div class="tick"></div>').join('')}</div><div class="dlab"><span>06시</span><span>12시</span><span>18시</span><span>24시</span></div></div>`;
+const phoneIcon=c=>`<svg viewBox="0 0 24 24" width="56" height="56"><path fill="${c}" d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg>`;
+const camIcon=c=>`<svg viewBox="0 0 24 24" width="56" height="56"><path fill="${c}" d="M4 7h3l2-2h6l2 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1zm8 3a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/></svg>`;
+const check=(s,c='#22B07D')=>`<svg viewBox="0 0 100 100" width="${s}" height="${s}" style="display:block"><circle cx="50" cy="50" r="48" fill="${c}"/><path d="M28 52 L44 67 L73 36" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+/* ---------- house (shared by day & alert scenes) ---------- */
+function house(){return`<div class="panel house" style="left:60px;top:130px;width:1100px;height:790px;background:#FBE7CF">
+ <div class="abs hwin" style="left:90px;top:90px;width:280px;height:210px;border:14px solid #fff;border-radius:18px;background:#A9DCFF;overflow:hidden">
+  <div class="abs sun" style="left:150px;top:30px;width:60px;height:60px;border-radius:50%;background:#FFD166"></div>
+  <div class="abs" style="left:0;top:118px;width:260px;height:70px;background:#7FBF8E;border-radius:50% 50% 0 0"></div>
+  <div class="abs flash full" style="opacity:0"></div>
+  <div class="abs" style="left:119px;top:0;width:14px;height:190px;background:#fff"></div><div class="abs" style="left:0;top:84px;width:260px;height:14px;background:#fff"></div></div>
+ <div class="abs" style="left:450px;top:110px;width:160px;height:120px;border:10px solid #fff;border-radius:10px;background:#F7D9B5;overflow:hidden;box-shadow:0 6px 14px rgba(0,0,0,.08)">
+  <div class="abs" style="left:10px;top:20px">${face(MOM,58)}</div><div class="abs" style="left:68px;top:26px">${face(DAU,58)}</div></div>
+ <div class="abs" style="left:0;top:610px;width:1100px;height:180px;background:#E2BE93"></div>
+ <div class="abs" style="left:0;top:606px;width:1100px;height:10px;background:#CFA678"></div>
+ <div class="abs" style="left:90px;top:450px;width:400px;height:170px;border-radius:44px;background:#6F8FC4"></div>
+ <div class="abs momSit" style="left:218px;top:360px">${person(MOM,144)}</div>
+ <div class="abs" style="left:80px;top:560px;width:420px;height:120px;border-radius:30px;background:#5F80B8"></div>
+ <div class="abs" style="left:58px;top:500px;width:72px;height:180px;border-radius:30px;background:#56739F"></div>
+ <div class="abs" style="left:450px;top:500px;width:72px;height:180px;border-radius:30px;background:#56739F"></div>
+ <div class="abs" style="left:100px;top:678px;width:16px;height:24px;background:#3E4F6E;border-radius:4px"></div><div class="abs" style="left:464px;top:678px;width:16px;height:24px;background:#3E4F6E;border-radius:4px"></div>
+ <div class="abs" style="left:550px;top:540px;width:120px;height:14px;background:#A9774B;border-radius:6px"></div><div class="abs" style="left:602px;top:554px;width:16px;height:60px;background:#8C6545"></div>
+ <div class="abs mph" style="left:586px;top:494px;width:46px;height:48px"><div class="abs mphg" style="left:-20px;top:-20px;width:86px;height:86px;border-radius:50%;background:radial-gradient(#FFE08A,rgba(255,224,138,0) 70%);opacity:0"></div><div class="abs" style="left:4px;top:0;width:38px;height:48px;background:#1D2633;border-radius:8px"><div class="abs mphs" style="left:4px;top:4px;width:30px;height:40px;background:#3B4656;border-radius:5px"></div></div></div>
+ <div class="abs" style="left:720px;top:190px;width:270px;height:420px;background:#8C6545;border-radius:12px 12px 0 0">
+  <div class="abs" style="left:14px;top:14px;width:242px;height:406px;background:#2F3440"></div>
+  <div class="abs door" style="left:14px;top:14px;width:242px;height:406px;background:#D59B63;border-radius:4px">
+   <div class="abs" style="left:24px;top:110px;width:194px;height:120px;border:4px solid #C3884F;border-radius:8px"></div>
+   <div class="abs" style="left:24px;top:250px;width:194px;height:130px;border:4px solid #C3884F;border-radius:8px"></div>
+   <div class="abs" style="left:56px;top:34px;width:130px;height:54px;background:#fff;border-radius:12px;font-size:24px;font-weight:900;display:flex;align-items:center;justify-content:center;color:#3B4656">화장실</div>
+   <div class="abs" style="left:202px;top:214px;width:24px;height:24px;border-radius:50%;background:#F2D27A"></div>
+   <div class="abs" style="left:226px;top:150px;width:14px;height:40px;border-radius:4px;background:#E9EEF2"></div></div></div>
+ <div class="abs" style="left:978px;top:330px;width:26px;height:64px;background:#fff;border-radius:7px;box-shadow:0 3px 8px rgba(0,0,0,.18)"><div class="abs led" style="left:8px;top:8px;width:10px;height:10px;border-radius:50%;background:#B9C3C9"></div></div>
+ <div class="abs momWalk" style="left:230px;top:300px;opacity:0">${person(MOM,150)}</div>
+ <div class="abs neigh" style="left:-200px;top:300px;opacity:0">${person(NEI,150)}</div>
+ <div class="abs dizzy" style="left:236px;top:318px;opacity:0"><svg width="110" height="50" viewBox="0 0 110 50"><path d="M5 30 q10 -25 20 0 t20 0 t20 0 t20 0 t20 0" fill="none" stroke="#7A5BB0" stroke-width="5" stroke-linecap="round"/></svg></div>
+ <div class="abs b119" style="left:470px;top:240px;opacity:0"><div class="pill" style="background:#E5484D;color:#fff;font-size:30px">${phoneIcon('#fff').replace(/56/g,'34')} 119 연락</div></div>
+ <div class="abs hpill" style="left:0;width:1100px;top:28px;display:flex;justify-content:center;opacity:0"><div class="pill" style="background:#E5484D;color:#fff;font-size:28px">마지막 신호 07:10 · <b class="nosig">8시간째 신호 없음</b></div></div>
+ <div class="abs lastlbl" style="left:830px;top:140px;opacity:0"><div class="pill" style="font-size:20px;padding:6px 16px">07:10 마지막 신호</div></div>
+</div>`}
+function houseRefs(R){const h=R.querySelector('.house');return{door:h.querySelector('.door'),led:h.querySelector('.led'),sit:h.querySelector('.momSit'),walk:h.querySelector('.momWalk'),win:h.querySelector('.hwin'),sun:h.querySelector('.sun'),flash:h.querySelector('.flash'),neigh:h.querySelector('.neigh'),dizzy:h.querySelector('.dizzy'),b119:h.querySelector('.b119'),hpill:h.querySelector('.hpill'),last:h.querySelector('.lastlbl'),mph:h.querySelector('.mph'),mphg:h.querySelector('.mphg'),mphs:h.querySelector('.mphs')}}
+function setDoor(d,a){d.style.transform=`perspective(900px) rotateY(${-a}deg)`;d.style.filter=`brightness(${1-a/300})`}
+function setLed(l,on){l.style.background=on>0?`rgb(${Math.round(185-151*on)},${Math.round(195-19*on)},${Math.round(201-76*on)})`:'#B9C3C9';l.style.boxShadow=on>0?`0 0 ${18*on}px ${6*on}px rgba(34,176,125,${.8*on})`:'none'}
+function setSky(H,m){H.win.style.background=sky(m);const night=m<375||m>1150;H.sun.style.background=night?'#F4F1DE':'#FFD166';tf(H.sun,{y:night?-6:L(m,360,720,60,0,E.lin)-L(m,720,1150,0,-60,E.lin)})}
+const pulse=()=>`<div class="abs pulse" style="left:-21px;top:-21px;width:42px;height:42px;border-radius:50%;background:#22B07D;box-shadow:0 0 30px 10px rgba(34,176,125,.55);opacity:0;z-index:60"></div>`;
+function movePulse(el,t,t0,t1,p0,c,p1){if(t<t0||t>t1+.15){op(el,0);return}const u=E.io(clamp((t-t0)/(t1-t0)));const[x,y]=bez(p0,c,p1,u);tf(el,{x,y,s:1-u*.3,o:t>t1?1-(t-t1)/.15:1})}
+const clockHTML=(l,t)=>`<div class="abs clock" style="left:${l}px;top:${t}px;display:flex;align-items:center;gap:18px;background:#fff;border-radius:999px;padding:10px 34px 10px 18px;box-shadow:0 10px 30px rgba(0,0,0,.08)"><div class="cic" style="width:52px;height:52px;border-radius:50%;background:#FFD166"></div><b class="ctime" style="font-size:52px;font-weight:900;letter-spacing:1px">06:00</b><span class="cday" style="font-size:26px;color:#7A8591;font-weight:700"></span></div>`;
+function setClock(R,m,day){R.querySelector('.ctime').textContent=hhmm(m);const n=m<375||m>1150;const c=R.querySelector('.cic');c.style.background=n?'#2C3A69':'#FFD166';c.style.boxShadow=n?'inset -14px -6px 0 0 #F4F1DE':'none';if(day!==undefined)R.querySelector('.cday').textContent=day}
+
+/* ---------- scenes ---------- */
+const scenes=[];
+function scene(a,b,html,upd,opt={}){const el=document.createElement('div');el.className='scene';el.innerHTML=html;document.getElementById('stage').insertBefore(el,document.getElementById('capwrap'));scenes.push({a,b,el,upd,opt})}
+const q=(R,s)=>R.querySelector(s), qa=(R,s)=>[...R.querySelectorAll(s)];
+
+/* S1 opening 0-7 */
+scene(0,7,`<div class="abs full" style="background:radial-gradient(circle at 50% 38%,#FFF8EE 0%,#FFE3C6 100%)"></div>
+ ${[0,1,2].map(()=>`<div class="abs ring" style="left:850px;top:150px;width:220px;height:220px;border-radius:50%;border:6px solid #22B07D;opacity:0"></div>`).join('')}
+ <div class="abs lg" style="left:850px;top:150px">${logo(220)}</div>
+ <div class="abs ctr t1" style="top:410px;font-size:150px;font-weight:900;letter-spacing:-4px">하루<span style="color:#22B07D">안부</span></div>
+ <div class="abs ctr t2" style="top:630px;font-size:52px;font-weight:700;color:#3B4656">화장실 문이 전하는 부모님 안부</div>
+ <div class="abs ctr t3" style="top:725px;font-size:32px;color:#6B7684;font-weight:500">누르지 않아도, 카메라 없이, 오늘도 괜찮으신지</div>`,
+ (t,R)=>{tf(q(R,'.lg'),{s:L(t,.2,1.1,0,1,E.back),o:P(t,.2,.5)});
+  qa(R,'.ring').forEach((r,i)=>{const s=1.2+i*.7;const p=(((t-s)%2.1)+2.1)%2.1/2.1;tf(r,{s:1+p*1.5,o:t>s?.6*(1-p):0})});
+  tf(q(R,'.t1'),{y:L(t,.9,1.7,50,0,E.out),o:P(t,.9,1.5)});tf(q(R,'.t2'),{y:L(t,1.6,2.4,40,0,E.out),o:P(t,1.6,2.2)});tf(q(R,'.t3'),{y:L(t,2.3,3.1,30,0,E.out),o:P(t,2.3,2.9)})});
+
+/* S2 problem 7-19 */
+const bldg=Array.from({length:7},(_,i)=>{const x=i*130-10,h=160+((i*73)%5)*40;let w='';for(let r=0;r<Math.floor(h/46);r++)for(let c=0;c<3;c++)if((i+r*3+c*5)%4!==0)w+=`<div class="abs" style="left:${x+18+c*34}px;top:${560-h+20+r*46}px;width:20px;height:24px;background:#FFD98A;opacity:.85;border-radius:3px"></div>`;return`<div class="abs" style="left:${x}px;top:${560-h}px;width:120px;height:${h}px;background:#1A2547"></div>`+w}).join('');
+scene(7,19,`<div class="abs full" style="background:#EDE4DA"></div>
+ <div class="panel pL" style="left:40px;top:50px;width:900px;height:840px;background:#2C3966">
+  <div class="abs" style="left:110px;top:70px;width:680px;height:420px;border-radius:24px;background:#3A4C86;overflow:hidden;border:16px solid #23305A"><div class="abs" style="left:540px;top:40px;width:70px;height:70px;border-radius:50%;background:#F4F1DE;box-shadow:0 0 40px #F4F1DE88"></div><div class="abs" style="left:0;top:-160px;width:700px;height:600px">${bldg}</div></div>
+  <div class="abs" style="left:130px;top:300px;width:300px;height:300px;border-radius:50%;background:radial-gradient(rgba(255,214,140,.55),rgba(255,214,140,0) 70%)"></div>
+  <div class="abs dau" style="left:330px;top:350px">${person(DAU,210)}</div>
+  <div class="abs" style="left:60px;top:650px;width:780px;height:34px;background:#8A6A4C;border-radius:8px"></div>
+  <div class="abs" style="left:126px;top:684px;width:648px;height:150px;background:#7A5C41"></div><div class="abs" style="left:100px;top:684px;width:26px;height:160px;background:#6E5239"></div><div class="abs" style="left:774px;top:684px;width:26px;height:160px;background:#6E5239"></div>
+  <div class="abs" style="left:325px;top:556px;width:220px;height:96px;background:#C9CFD6;border-radius:10px 10px 0 0"><div class="abs" style="left:96px;top:34px;width:28px;height:28px;border-radius:50%;background:#E8ECEF"></div></div>
+  <div class="abs" style="left:170px;top:600px;width:60px;height:50px;background:#E9A23B;border-radius:6px 6px 14px 14px"></div>
+  <div class="abs bub" style="left:560px;top:230px;opacity:0"><div style="position:relative;width:200px;height:170px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;gap:4px">${face(MOM,96)}<b style="font-size:60px;color:#9B6FB5">?</b></div><div class="abs" style="left:-6px;top:150px;width:34px;height:34px;border-radius:50%;background:#fff"></div><div class="abs" style="left:-30px;top:186px;width:18px;height:18px;border-radius:50%;background:#fff"></div></div>
+  <div class="abs" style="left:40px;top:36px"><div class="pill" style="font-size:24px">서울 · 딸 지은 (34)</div></div></div>
+ <div class="panel pR" style="left:980px;top:50px;width:900px;height:840px;background:linear-gradient(#2E3B6B,#5B5E8E 60%,#8E7598)">
+  <div class="abs" style="left:640px;top:90px;width:90px;height:90px;border-radius:50%;background:#F4F1DE;box-shadow:0 0 60px #F4F1DE99"></div>
+  <div class="abs" style="left:-200px;top:470px;width:900px;height:600px;border-radius:50%;background:#3E6B5A"></div><div class="abs" style="left:300px;top:520px;width:1000px;height:600px;border-radius:50%;background:#2F5748"></div>
+  <div class="abs" style="left:300px;top:380px;width:320px;height:220px;background:#F2E6D8"></div>
+  <div class="abs" style="left:270px;top:260px;width:0;height:0;border-left:190px solid transparent;border-right:190px solid transparent;border-bottom:130px solid #B5533C"></div>
+  <div class="abs" style="left:350px;top:430px;width:110px;height:100px;background:#FFD98A;border:8px solid #C9A88A;overflow:hidden"><div class="abs" style="left:20px;top:22px">${person(MOM,60)}</div></div>
+  <div class="abs" style="left:500px;top:470px;width:70px;height:130px;background:#8C6545;border-radius:6px 6px 0 0"></div>
+  <div class="abs" style="left:40px;top:36px"><div class="pill" style="font-size:24px">전주 · 어머니 (71) 혼자 사세요</div></div></div>
+ <svg class="abs arc" style="left:0;top:0" width="1920" height="1080"><path d="M640 300 Q960 120 1380 410" fill="none" stroke="#fff" stroke-width="6" stroke-dasharray="4 16" stroke-linecap="round" pathLength="1000" stroke-dashoffset="0"/></svg>
+ <div class="abs km" style="left:880px;top:150px;opacity:0"><div class="pill" style="font-size:30px">230 km</div></div>
+ <div class="abs bd1" style="left:500px;top:300px;opacity:0"><div class="card" style="display:flex;align-items:center;gap:20px;padding:26px 34px;position:relative;box-shadow:0 20px 40px rgba(0,0,0,.25)">${phoneIcon('#3B4656')}<div><div style="font-size:30px;font-weight:900">매일 전화하기</div><div style="font-size:22px;color:#6B7684;font-weight:500">회의 중엔 놓치기 일쑤</div></div><div class="abs" style="left:24px;top:56px;width:72px;height:8px;background:#E5484D;border-radius:4px;transform:rotate(-40deg)"></div></div></div>
+ <div class="abs bd2" style="left:1000px;top:300px;opacity:0"><div class="card" style="display:flex;align-items:center;gap:20px;padding:26px 34px;position:relative;box-shadow:0 20px 40px rgba(0,0,0,.25)">${camIcon('#3B4656')}<div><div style="font-size:30px;font-weight:900">실내 카메라</div><div style="font-size:22px;color:#6B7684;font-weight:500">"감시받는 것 같아 싫다"</div></div><div class="abs" style="left:24px;top:56px;width:72px;height:8px;background:#E5484D;border-radius:4px;transform:rotate(-40deg)"></div></div></div>`,
+ (t,R)=>{tf(q(R,'.pL'),{x:L(t,0,1,-60,0,E.out)});tf(q(R,'.pR'),{x:L(t,0,1,60,0,E.out)});
+  tf(q(R,'.dau'),{y:Math.sin(t*2)*3});
+  const bp=P(t,2,2.6,E.back);tf(q(R,'.bub'),{s:.4+.6*bp,o:P(t,2,2.3)*(1-P(t,6,6.4))});
+  const arc=q(R,'.arc path');arc.style.strokeDashoffset=-t*30;arc.parentNode.style.opacity=P(t,3,3.6)*(1-P(t,6,6.4));
+  tf(q(R,'.km'),{s:L(t,3.2,3.8,.6,1,E.back),o:P(t,3.2,3.6)*(1-P(t,6,6.4))});
+  tf(q(R,'.bd1'),{y:L(t,6.4,7.1,40,0,E.back),o:P(t,6.4,6.8)});tf(q(R,'.bd2'),{y:L(t,7.2,7.9,40,0,E.back),o:P(t,7.2,7.6)})});
+
+/* S3 setup 19-38 */
+const momPhoneSetup=`<div class="scr" style="padding:20px 26px"><div class="apphead" style="font-size:30px">${logo(46)} 하루안부</div>
+ <div class="mA" style="position:relative"><div style="font-size:34px;font-weight:900;line-height:1.35;margin:30px 0 30px">가족 코드를<br>입력하세요</div>
+ <div style="display:flex;gap:8px">${[4,8,2,9,1,3].map(d=>`<div style="flex:1;height:76px;border-radius:14px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.06);font-size:40px;font-weight:900;display:flex;align-items:center;justify-content:center"><span class="dg" style="opacity:0">${d}</span></div>`).join('')}</div>
+ <div style="font-size:20px;color:#7A8591;margin-top:24px;font-weight:500">딸이 보낸 6자리 코드</div></div>
+ <div class="mB abs" style="left:26px;right:26px;top:120px;opacity:0;text-align:center"><div style="display:flex;justify-content:center;margin:40px 0 30px">${check(150)}</div><div style="font-size:36px;font-weight:900;line-height:1.4">연결됐어요!</div><div style="font-size:24px;color:#46525F;margin-top:16px;line-height:1.5;font-weight:500">이제 평소처럼<br>생활하시면 돼요</div><div class="btn" style="margin-top:46px;font-size:28px;padding:26px">오늘도 괜찮아요</div></div></div>`;
+const dauPhoneSetup=`<div class="scr">
+ <div class="scrn sA" style="padding:14px 22px"><div class="apphead">${logo(40)} 센서 추가</div><div class="card" style="text-align:center;padding:30px 22px">
+  <svg width="220" height="230" viewBox="0 0 220 230"><rect x="40" y="10" width="140" height="220" rx="8" fill="#8C6545"/><rect x="50" y="20" width="120" height="210" fill="#D59B63"/><rect x="172" y="70" width="18" height="44" rx="5" fill="#fff" stroke="#22B07D" stroke-width="3"/><rect x="156" y="78" width="12" height="30" rx="3" fill="#E9EEF2" stroke="#22B07D" stroke-width="3"/><circle cx="181" cy="80" r="4" fill="#22B07D"/></svg>
+  <div style="font-size:22px;font-weight:900;margin-top:14px;line-height:1.45">문틀엔 센서를,<br>문에는 자석을 붙여주세요</div><div style="font-size:17px;color:#7A8591;margin-top:10px;font-weight:500">양면테이프로 30초면 끝나요</div></div><div class="btn bNext">다음</div></div>
+ <div class="scrn sB" style="padding:14px 22px"><div class="apphead">${logo(40)} 와이파이 연결</div><div class="card"><div style="display:flex;align-items:center;justify-content:space-between;font-size:22px;font-weight:700"><span>어머니댁_WiFi</span><span class="wchk" style="opacity:0">${check(34)}</span></div><div style="height:14px;border-radius:7px;background:#EEF2F0;margin-top:24px;overflow:hidden"><div class="wbar" style="height:100%;width:0;background:#22B07D;border-radius:7px"></div></div><div class="wtxt" style="font-size:18px;color:#7A8591;margin-top:14px;font-weight:500">센서와 연결하는 중…</div></div></div>
+ <div class="scrn sC" style="padding:14px 22px"><div class="apphead">${logo(40)} 테스트</div><div class="card" style="text-align:center;padding:34px 22px;position:relative;min-height:300px"><div class="cWait"><div style="font-size:24px;font-weight:900;line-height:1.5">화장실 문을 한 번<br>열었다 닫아주세요</div><div style="margin:30px auto 0;width:90px;height:90px;border-radius:50%;border:8px solid #DDE5E1;border-top-color:#22B07D" class="spin"></div></div>
+  <div class="cOk abs" style="left:0;right:0;top:30px;opacity:0"><div style="display:flex;justify-content:center">${check(130)}</div><div style="font-size:28px;font-weight:900;margin-top:20px">신호 확인!</div><div style="font-size:19px;color:#7A8591;margin-top:8px;font-weight:500">오전 10:24 · 화장실 문 열림</div></div></div></div>
+ <div class="scrn sD" style="padding:14px 22px"><div class="apphead">${logo(40)} 우리 가족</div>${homeCard('전주 · 센서 정상 작동')}<div class="card" style="display:flex;align-items:center;gap:14px;font-size:20px;font-weight:700">${check(40)}<span>어머니 폰도 연결됐어요</span></div></div></div>`;
+scene(19,38,`<div class="abs full" style="background:#FFF3E3"></div>
+ <div class="abs" style="left:0;top:960px;width:1920px;height:120px;background:#EFD9BD"></div>
+ <div class="abs" style="left:170px;top:100px;width:580px;height:880px;background:#8C6545;border-radius:16px 16px 0 0">
+  <div class="abs" style="left:24px;top:24px;width:532px;height:856px;background:#2F3440"></div>
+  <div class="abs door" style="left:24px;top:24px;width:532px;height:856px;background:#D59B63;border-radius:6px">
+   <div class="abs" style="left:50px;top:200px;width:432px;height:270px;border:6px solid #C3884F;border-radius:10px"></div><div class="abs" style="left:50px;top:510px;width:432px;height:300px;border:6px solid #C3884F;border-radius:10px"></div>
+   <div class="abs" style="left:146px;top:60px;width:240px;height:96px;background:#fff;border-radius:18px;font-size:46px;font-weight:900;display:flex;align-items:center;justify-content:center;color:#3B4656">화장실</div>
+   <div class="abs" style="left:478px;top:470px;width:44px;height:44px;border-radius:50%;background:#F2D27A"></div>
+   <div class="abs mag" style="left:500px;top:250px;width:26px;height:80px;border-radius:6px;background:#E9EEF2;box-shadow:0 2px 6px rgba(0,0,0,.2);opacity:0"></div></div></div>
+ <div class="abs sen" style="left:728px;top:270px;width:50px;height:120px;background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.2);opacity:0"><div class="abs led" style="left:16px;top:14px;width:18px;height:18px;border-radius:50%;background:#B9C3C9"></div></div>
+ <div class="abs hand" style="left:0;top:0;opacity:0"><div class="abs" style="left:-10px;top:30px;width:420px;height:70px;background:#4F7FD9;border-radius:35px;transform-origin:0 50%;transform:rotate(28deg)"></div><div class="abs" style="left:-40px;top:20px;width:90px;height:90px;border-radius:50%;background:#F5CDAA"></div></div>
+ <div class="abs cS" style="left:830px;top:290px;opacity:0"><div class="pill" style="font-size:24px">센서 · 문틀</div></div>
+ <div class="abs cM" style="left:450px;top:390px;opacity:0"><div class="pill" style="font-size:24px">자석 · 문</div></div>
+ ${pulse()}
+ <div class="abs pwD" style="left:1290px;top:150px">${phone('pD',dauPhoneSetup,'10:21')}<div class="lbl" style="top:-70px"><div class="pill" style="font-size:22px">딸 지은 폰</div></div></div>
+ <div class="abs pwM" style="left:1290px;top:150px;opacity:0">${phone('pM',momPhoneSetup,'10:26')}<div class="lbl" style="top:-70px"><div class="pill" style="font-size:22px">어머니 폰</div></div></div>`,
+ (t,R)=>{const door=q(R,'.door'),sen=q(R,'.sen'),hand=q(R,'.hand'),mag=q(R,'.mag');
+  // hand brings sensor
+  const sx=728,sy=270;let hx,hy,ho;
+  if(t<4){hx=L(t,.4,2.2,1400,sx+40,E.out);hy=L(t,.4,2.2,1100,sy+70,E.out);ho=P(t,.4,.8)}
+  else{hx=L(t,4,5.2,1400,640+40,E.out);hy=L(t,4,5.2,1100,370,E.out);ho=1}
+  if(t>2.7&&t<4){hx=L(t,2.7,3.7,sx+40,1500,E.in);hy=L(t,2.7,3.7,sy+70,1200,E.in)}
+  if(t>5.6){hx=L(t,5.6,6.6,680,1500,E.in);hy=L(t,5.6,6.6,370,1200,E.in);ho=1-P(t,6.3,6.6)}
+  tf(hand,{x:hx,y:hy,o:ho});
+  tf(sen,{x:t<2.3?hx-sx-40:0,y:t<2.3?hy-sy-70:0,s:t>2.2&&t<2.6?.94:1,o:t>.5?1:0});
+  tf(mag,{x:t<5.3?(hx-40)-(170+24+500):0,y:t<5.3?(hy-70+20)-(100+24+250):0,o:t>4.2?1:0});
+  op(q(R,'.cS'),P(t,2.6,3)*(1-P(t,8,8.4)));op(q(R,'.cM'),P(t,5.4,5.8)*(1-P(t,8,8.4)));
+  // test door
+  const da=t<10?0:t<10.6?L(t,10,10.6,0,38):t<10.9?38:L(t,10.9,11.5,38,0);door.style.transform=`perspective(3000px) rotateY(${da}deg)`;door.style.filter=`brightness(${1-da/200})`;
+  const led=q(R,'.led');const lon=t>2.4&&t<3.2?(Math.sin(t*20)>0?1:0):t>10.4&&t<12.4?1-P(t,10.4,12.4,E.lin):0;setLed(led,lon);
+  movePulse(q(R,'.pulse'),t,10.45,11.2,[753,292],[1040,120],[1490,520]);
+  // daughter screens
+  const D=q(R,'.pD');op(q(D,'.sA'),t<6.7?1:0);op(q(D,'.sB'),t>=6.7&&t<9.6?1:0);op(q(D,'.sC'),t>=9.6&&t<16.6?1:0);op(q(D,'.sD'),t>=16.6?P(t,16.6,16.9):0);
+  tap(q(D,'.tap'),t,6.3);const tp=q(D,'.tap');tp.style.left='186px';tp.style.top='738px';
+  q(D,'.wbar').style.width=(P(t,6.9,8.9,E.io)*100)+'%';op(q(D,'.wchk'),P(t,8.9,9.2));q(D,'.wtxt').textContent=t>8.9?'연결 완료':'센서와 연결하는 중…';
+  q(D,'.spin').style.transform=`rotate(${t*360}deg)`;op(q(D,'.cWait'),t<11.2?1:0);const ok=q(D,'.cOk');tf(ok,{s:L(t,11.2,11.7,.6,1,E.back),o:P(t,11.2,11.4)});
+  if(t>=16.6){q(D,'.light').style.background='#22B07D';q(D,'.last').textContent='10:24';q(D,'.cnt').textContent='1';q(D,'.stt').textContent='연결 완료 · 평소와 같아요'}
+  // phone layout
+  const sp=P(t,13,14);tf(q(R,'.pwD'),{x:-300*sp,s:1-.08*sp});tf(q(R,'.pwM'),{x:L(t,13,14,700,170,E.out),s:.92,o:P(t,13,13.4)});
+  const M=q(R,'.pM');qa(M,'.dg').forEach((d,i)=>op(d,P(t,14.2+i*.35,14.35+i*.35)));op(q(M,'.mA'),1-P(t,16.6,16.9));tf(q(M,'.mB'),{s:L(t,16.7,17.3,.8,1,E.back),o:P(t,16.7,17)});
+ });
+
+/* S4 ordinary day 38-61 */
+const EV=[[3.2,hm(6,42)],[9.5,hm(9,15)],[12,hm(12,30)],[14.5,hm(15,50)],[17,hm(19,20)],[19.5,hm(21,40)]];
+const CK4=[[0,hm(6,0)],[3.2,hm(6,42)],[9.5,hm(9,15)],[12,hm(12,30)],[14.5,hm(15,50)],[17,hm(19,20)],[19.5,hm(21,40)],[23,hm(22,30)]];
+scene(38,61,`<div class="abs full" style="background:#FFF5EA"></div>${house()}${clockHTML(60,22)}${pulse()}
+ <div class="abs" style="left:1390px;top:100px">${phone('pD',`<div class="scr">${noti('어머니 첫 신호가 도착했어요','오전 06:42 · 화장실 문이 열렸어요','n1')}<div class="apphead">${logo(40)} 우리 가족</div>${homeCard()}${dayCard(6)}<div class="card" style="font-size:18px;color:#46525F;font-weight:500;line-height:1.5">기준: <b>8시간</b> 동안 신호가 없으면<br>어머니께 먼저 안부를 물어요</div></div>`,'06:00')}
+ <div class="lbl" style="top:-74px"><div class="pill" style="font-size:22px">딸 지은 폰</div></div></div>`,
+ (t,R)=>{const H=houseRefs(R);const m=key(t,CK4);setClock(R,m,'평범한 하루');setSky(H,m);q(R,'.ptime').textContent=hhmm(m);
+  let sitO=1,walkX=0,walkO=0,da=0,led=0,cnt=0,last='--:--';
+  EV.forEach(([te,em],i)=>{const wd=i===0?1.8:1.0;
+   if(t>te-wd-.3&&t<te+1.3){if(t<te-wd){sitO=Math.min(sitO,1-P(t,te-wd-.3,te-wd))}else sitO=0;
+    walkX=L(t,te-wd,te-.25,0,545,E.io);walkO=t<te-wd?P(t,te-wd-.3,te-wd):1-P(t,te-.05,te+.15);
+    if(t>te+1)sitO=P(t,te+1,te+1.3)}
+   da=Math.max(da,t<te-.3?0:t<te?L(t,te-.3,te,0,60):t<te+.3?60:L(t,te+.3,te+.7,60,0));
+   if(t>te)led=Math.max(led,1-P(t,te,te+1.4,E.lin));if(t>=te+.8){cnt=i+1;last=hhmm(em)}});
+  op(H.sit,sitO);tf(H.walk,{x:walkX,y:-Math.abs(Math.sin(t*9))*6,o:walkO});setDoor(H.door,da);setLed(H.led,led);
+  const pl=q(R,'.pulse');op(pl,0);EV.forEach(([te])=>{if(t>=te&&t<=te+1)movePulse(pl,t,te,te+.8,[1051,492],[1380,200],[1716,304])});
+  const D=q(R,'.pD');q(D,'.cnt').textContent=cnt;q(D,'.last').textContent=last;
+  const lg=q(D,'.light');lg.style.background=cnt?'#22B07D':'#C9D1D6';lg.style.boxShadow=cnt?`0 0 0 ${8+6*Math.sin(t*4)}px rgba(34,176,125,.18)`:'none';
+  q(D,'.stt').textContent=cnt?(t>20.2?`오늘 신호 ${cnt}회 · 평소와 같아요`:'평소와 같아요'):'아직 신호가 없어요';
+  qa(D,'.tick').forEach((k,i)=>{const[te,em]=EV[i];k.style.left=`calc(${(em-360)/1080*100}% - 4px)`;tf(k,{s:L(t,te+.8,te+1.1,0,1,E.back),o:P(t,te+.8,te+.9)})});
+  const n=q(D,'.n1');tf(n,{y:L(t,4,4.5,-160,0,E.out)-L(t,7.4,7.9,0,-160,E.in),o:t>4&&t<7.9?1:0})});
+
+/* S5 calendar 61-70 */
+const calDays=(()=>{let h='';['일','월','화','수','목','금','토'].forEach(d=>h+=`<div class="h">${d}</div>`);const first=new Date(2026,9,1).getDay();for(let i=0;i<first;i++)h+='<div></div>';for(let d=1;d<=31;d++){const away=d===24||d===25;h+=`<div class="d" style="background:${away?'#F0F2F4':'#F3FAF6'}">${d}<i style="background:${away?'#B9C3C9':'#22B07D'}"></i></div>`}return h})();
+scene(61,70,`<div class="abs full" style="background:linear-gradient(135deg,#F1FAF5,#E3F4EC)"></div>
+ <div class="abs" style="left:760px;top:100px">${phone('pC',`<div class="scr"><div class="apphead">${logo(40)} 어머니 · 10월 기록</div><div class="card" style="padding:14px"><div class="cal">${calDays}</div></div><div class="card" style="display:flex;gap:22px;font-size:17px;font-weight:700;padding:16px 22px"><span><b style="color:#22B07D">●</b> 정상</span><span><b style="color:#B9C3C9">●</b> 외출 모드</span><span><b style="color:#E5484D">●</b> 경보</span></div></div>`,'20:10')}</div>
+ <div class="stat s1" style="left:200px;top:230px"><span>평균 첫 신호</span><b>06:48</b></div>
+ <div class="stat s2" style="left:200px;top:470px"><span>하루 평균 신호</span><b>5.8<small>회</small></b></div>
+ <div class="stat s3" style="left:1260px;top:230px"><span>가장 늦은 첫 신호</span><b>08:10</b><small style="color:#7A8591">10/11 일요일</small></div>
+ <div class="stat s4" style="left:1260px;top:470px"><span>무신호 경보</span><b>0<small>회</small></b><small style="color:#7A8591">이번 달 평온했어요</small></div>`,
+ (t,R)=>{qa(R,'.cal .d i').forEach((d,i)=>tf(d,{s:L(t,.5+i*.06,.8+i*.06,0,1,E.back),o:P(t,.5+i*.06,.6+i*.06)}));
+  ['.s1','.s2','.s3','.s4'].forEach((s,i)=>tf(q(R,s),{y:L(t,1.6+i*.5,2.3+i*.5,40,0,E.out),o:P(t,1.6+i*.5,2.1+i*.5)}))});
+
+/* S6 away mode 70-79 */
+scene(70,79,`<div class="abs full" style="background:#FFF5EA"></div>
+ <div class="panel" style="left:60px;top:110px;width:1180px;height:800px;background:linear-gradient(#BFE5FF,#E8F6FF)">
+  <div class="abs" style="left:-100px;top:330px;width:0;height:0;border-left:380px solid transparent;border-right:380px solid transparent;border-bottom:420px solid #E08A4C"></div>
+  <div class="abs" style="left:380px;top:250px;width:0;height:0;border-left:420px solid transparent;border-right:420px solid transparent;border-bottom:500px solid #C9673A"></div>
+  <div class="abs" style="left:715px;top:250px;width:0;height:0;border-left:85px solid transparent;border-right:85px solid transparent;border-bottom:100px solid #FBEFE6"></div>
+  <div class="abs" style="left:0;top:640px;width:1180px;height:200px;background:#8CBF7A"></div>
+  ${[90,230,980,1080].map((x,i)=>`<div class="abs" style="left:${x}px;top:${520+i%2*30}px;width:90px;height:130px;border-radius:50% 50% 40% 40%;background:${['#E2563B','#F2A33A','#E8743A','#F4C243'][i]}"></div><div class="abs" style="left:${x+38}px;top:${640+i%2*30}px;width:14px;height:40px;background:#7A5A3C"></div>`).join('')}
+  <div class="abs hiker" style="left:470px;top:300px">${person({...MOM,bag:true,hat:true},190)}</div>
+  <div class="abs" style="left:40px;top:36px"><div class="pill" style="font-size:24px">어머니 · 친구들과 1박 2일 단풍 여행</div></div></div>
+ <div class="abs" style="left:1390px;top:100px">${phone('pA',`<div class="scr"><div class="apphead">${logo(40)} 우리 가족</div>${homeCard()}
+  <div class="card"><div style="display:flex;align-items:center;justify-content:space-between"><div><div style="font-size:22px;font-weight:900">외출 모드</div><div class="awd" style="font-size:17px;color:#7A8591;margin-top:4px;font-weight:500">여행·입원 중 알림 쉬기</div></div><div class="tog"><i></i></div></div></div>
+  <div class="card awc" style="opacity:0;display:flex;gap:16px;align-items:center;background:#F0F2F4"><div style="width:52px;height:52px;border-radius:50%;background:#B9C3C9;display:flex;align-items:center;justify-content:center;gap:6px;flex:none"><i style="width:8px;height:22px;background:#fff;border-radius:2px"></i><i style="width:8px;height:22px;background:#fff;border-radius:2px"></i></div><div style="font-size:19px;font-weight:700;line-height:1.4">11월 14일(토) 저녁까지<br>무신호 알림을 쉬어요</div></div></div>`,'08:30')}
+ <div class="lbl"><div class="pill" style="font-size:22px">딸 지은 폰</div></div></div>`,
+ (t,R)=>{tf(q(R,'.hiker'),{x:Math.sin(t*1.2)*30,y:-Math.abs(Math.sin(t*6))*10});
+  const A=q(R,'.pA');const on=P(t,3,3.3);const tg=q(A,'.tog');tg.style.background=lerpC('D5DCD9','22B07D',on);tf(q(tg,'i'),{x:32*on});
+  tap(q(A,'.tap'),t,2.9);const tp=q(A,'.tap');tp.style.left='318px';tp.style.top='468px';
+  q(A,'.awd').textContent=t>3.1?'켜짐 · 11월 14일까지':'여행·입원 중 알림 쉬기';
+  tf(q(A,'.awc'),{y:L(t,3.5,4,20,0,E.out),o:P(t,3.5,3.9)});
+  q(A,'.last').textContent='07:52';q(A,'.cnt').textContent='2';const lg=q(A,'.light');lg.style.background=t>3.3?'#B9C3C9':'#22B07D';
+  const st=q(A,'.stt');st.textContent=t>3.3?'외출 중 · 알림 쉬는 중':'평소와 같아요';st.style.color=t>3.3?'#7A8591':'#22B07D'});
+
+/* S7 alert 79-107 */
+const CK7=[[3,hm(7,4)],[4.3,hm(7,10)],[6,hm(7,22)],[9.5,hm(15,10)],[14.6,hm(15,30)],[20.6,hm(15,40)],[23.5,hm(15,50)],[28,hm(15,56)]];
+const momAlert=`<div class="scr" style="background:#FFF6DC;padding:20px 26px;text-align:center"><div style="display:flex;justify-content:center;margin-top:40px"><div style="width:150px;height:150px;border-radius:50%;background:#FFD166;display:flex;align-items:center;justify-content:center">${logo(96)}</div></div>
+ <div style="font-size:40px;font-weight:900;margin-top:36px;line-height:1.35">어머니,<br>괜찮으세요?</div><div style="font-size:23px;color:#5B4A3A;margin-top:18px;font-weight:500;line-height:1.5">8시간 동안 신호가 없어요</div>
+ <div class="btn" style="margin-top:48px;font-size:34px;padding:30px;border-radius:26px">괜찮아요</div><div class="mcd" style="font-size:20px;color:#8A7A66;margin-top:22px;font-weight:700">20분 뒤 지은님께 알려요</div></div>`;
+const dauAlert=`<div class="scr" style="padding:0">
+ <div class="scrn a1" style="opacity:1;background:#FFF1F1"><div style="background:#E5484D;color:#fff;padding:30px 26px 26px;font-size:24px;font-weight:900;display:flex;align-items:center;gap:12px"><span style="width:40px;height:40px;border-radius:50%;background:#fff;color:#E5484D;display:flex;align-items:center;justify-content:center;font-size:28px">!</span>안부 경보</div>
+  <div style="padding:24px 26px"><div style="display:flex;gap:16px;align-items:center">${face(MOM,84)}<div style="font-size:30px;font-weight:900;line-height:1.3">어머니 8시간째<br>신호가 없어요</div></div>
+  <div class="card" style="margin-top:22px;font-size:19px;line-height:1.7;font-weight:500;color:#46525F">마지막 신호 <b>07:10 화장실 문</b><br>어머니 폰 안부 확인 <b style="color:#E5484D">응답 없음</b><div class="a2nd" style="opacity:0">2차 보호자 <b>옆집 김 이모님</b>께 알림</div></div>
+  <div class="btn bCall" style="display:flex;align-items:center;justify-content:center;gap:10px">${phoneIcon('#fff').replace(/56/g,'30')} 어머니께 전화하기</div><div class="btn gray" style="margin-top:12px">확인했어요</div></div></div>
+ <div class="scrn a2" style="background:#1F2633;color:#fff;text-align:center"><div style="display:flex;justify-content:center;margin-top:110px">${face(MOM,150)}</div><div style="font-size:38px;font-weight:900;margin-top:26px">어머니</div><div class="cst" style="font-size:24px;margin-top:14px;color:#B9C3C9">전화 거는 중…</div>
+  <div style="position:absolute;left:0;right:0;bottom:90px;display:flex;justify-content:center"><div style="width:96px;height:96px;border-radius:50%;background:#E5484D;display:flex;align-items:center;justify-content:center">${phoneIcon('#fff').replace(/56/g,'46')}</div></div></div>
+ <div class="scrn a3" style="background:#EEF8F3"><div style="padding:70px 26px 0;text-align:center"><div style="display:flex;justify-content:center">${face(NEI,130)}</div><div style="font-size:30px;font-weight:900;margin-top:24px;line-height:1.4">김 이모님이<br>확인했어요</div>
+  <div class="card" style="margin-top:26px;text-align:left;font-size:20px;line-height:1.8;font-weight:500;color:#46525F">15:50 어머니댁 방문<br><b style="color:#E5484D">119 연락</b> · 병원으로 이동 중<br>"어지러워서 누워 계셨어요"</div><div class="btn">병원 정보 보기</div></div></div></div>`;
+const neiPhone=`<div class="scr" style="background:linear-gradient(#5B5E9E,#9B7AB5);padding:0"><div style="text-align:center;color:#fff;margin-top:70px"><div style="font-size:22px;font-weight:500">11월 5일 목요일</div><div class="ltime" style="font-size:96px;font-weight:700;letter-spacing:-2px">15:31</div></div>
+ <div class="noti nN" style="top:300px;opacity:1">${logo(46)}<div><div class="na">하루안부 · 지금</div><div class="nt">지은 어머니 신호가 8시간째 없어요</div><div class="nb">가까우시면 확인 부탁드려요</div></div></div>
+ <div class="nBtn abs" style="left:24px;right:24px;top:470px"><div class="btn" style="font-size:26px">제가 가볼게요</div></div></div>`;
+scene(79,107,`<div class="abs full" style="background:#FFF5EA"></div>${house()}${clockHTML(60,22)}
+ <div class="abs pwMo" style="left:1330px;top:150px;opacity:0">${phone('pMo',momAlert,'15:10')}<div class="lbl"><div class="pill" style="font-size:22px">어머니 폰</div></div></div>
+ <div class="abs pwDa" style="left:1330px;top:150px;opacity:0">${phone('pDa',dauAlert,'15:30')}<div class="lbl"><div class="pill" style="font-size:22px">딸 지은 폰</div></div></div>
+ <div class="abs pwNe" style="left:1330px;top:150px;opacity:0">${phone('pNe',neiPhone,'15:31')}<div class="lbl"><div class="pill" style="font-size:22px">옆집 김 이모 폰</div></div></div>
+ <div class="abs full title7" style="background:#1D2648;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:80"><div style="font-size:84px;font-weight:900;color:#fff">그리고, 어느 날</div><div style="font-size:34px;color:#B9C3D9;margin-top:20px;font-weight:500">11월 5일 목요일</div></div>`,
+ (t,R)=>{const H=houseRefs(R);op(q(R,'.title7'),1-P(t,2.6,3.2,E.lin));const m=key(t,CK7);setClock(R,m,'11월 5일');setSky(H,m);
+  // last signal: mom comes out of bathroom
+  const out=t>3.4&&t<6;tf(H.walk,{x:L(t,3.8,5.6,545,0),y:-Math.abs(Math.sin(t*8))*6,o:t<3.6?0:out?P(t,3.6,3.8):0});
+  setDoor(H.door,t<3.3?0:t<3.7?L(t,3.3,3.7,0,60):t<4.1?60:L(t,4.1,4.5,60,0));setLed(H.led,t>3.6?1-P(t,3.6,5,E.lin):0);
+  op(H.last,P(t,4,4.3)*(1-P(t,8.6,9)));
+  const lie=P(t,7.6,8.6);const up=P(t,23.6,24.6);const ang=-88*lie*(1-up)+(-25*up);
+  tf(H.sit,{r:ang,y:34*lie*(1-up),x:-8*up,o:t<5.6?0:P(t,5.6,5.9)});H.sit.style.transformOrigin='72px 151px';
+  tf(H.dizzy,{x:Math.sin(t*6)*6,o:P(t,6.3,6.6)*(1-P(t,7.6,8))});
+  tf(H.hpill,{y:L(t,9.4,9.9,-30,0,E.out),o:P(t,9.4,9.7)*(1-P(t,24,24.4))});
+  // mom phone on table vibrates
+  const ring=t>9.8&&t<14.6;tf(H.mph,{r:ring?Math.sin(t*60)*8:0});op(H.mphg,ring?.6+.4*Math.sin(t*8):0);H.mphs.style.background=ring?'#FFD166':'#3B4656';
+  // neighbor arrives
+  tf(H.neigh,{x:L(t,21.6,23.4,0,690,E.io),y:-Math.abs(Math.sin(t*9))*6*(t<23.4?1:0),o:P(t,21.6,21.9)});
+  const b=H.b119;tf(b,{y:L(t,24.4,24.9,20,0,E.back),o:P(t,24.4,24.7)});
+  op(H.flash,t>24.8?(Math.floor(t*4)%2?0.55:0.35):0);H.flash.style.background=Math.floor(t*4)%2?'#E5484D':'#3B82F6';
+  // phones
+  const Mo=q(R,'.pwMo'),Da=q(R,'.pwDa'),Ne=q(R,'.pwNe');
+  tf(Mo,{x:L(t,9.8,10.4,120,0,E.out)+(ring?Math.sin(t*70)*3:0),s:.9,o:P(t,9.8,10.2)*(1-P(t,14.6,15))});
+  q(q(R,'.pMo'),'.mcd').textContent=t>13.6?'지은님께 알리는 중…':`${Math.max(1,Math.ceil(L(t,10,13.6,20,1,E.lin)))}분 뒤 지은님께 알려요`;
+  const dx=-185*P(t,20.4,21)*(1-P(t,24.8,25.4));
+  tf(Da,{x:L(t,14.8,15.4,120,0,E.out)+dx,y:0,s:.9-.12*P(t,20.4,21)*(1-P(t,24.8,25.4)),o:P(t,14.8,15.2)});
+  tf(Ne,{x:L(t,20.5,21.1,300,185,E.out),s:.78,o:P(t,20.5,20.9)*(1-P(t,24.6,25))});
+  const DA=q(R,'.pDa');op(q(DA,'.a1'),t<17.4||t>=19.9&&t<25.4?1:0);op(q(DA,'.a2'),t>=17.4&&t<19.9?1:0);op(q(DA,'.a3'),t>=25.4?P(t,25.4,25.7):0);
+  q(DA,'.cst').textContent=t>19?'응답 없음':'전화 거는 중…';q(DA,'.cst').style.color=t>19?'#FF8A8E':'#B9C3C9';
+  op(q(DA,'.a2nd'),P(t,19.9,20.3));tap(q(DA,'.tap'),t,17.1);const tp=q(DA,'.tap');tp.style.left='186px';tp.style.top='482px';
+  q(DA,'.ptime').textContent=hhmm(m);
+  const NE=q(R,'.pNe');q(NE,'.ltime').textContent=hhmm(m);q(NE,'.ptime').textContent=hhmm(m);tap(q(NE,'.tap'),t,21.3);const tq=q(NE,'.tap');tq.style.left='186px';tq.style.top='560px';
+  tf(q(NE,'.nN'),{y:L(t,20.6,21,-60,0,E.out)});
+ });
+
+/* S8 recovery 107-114 */
+scene(107,114,`<div class="abs full" style="background:radial-gradient(circle at 50% 40%,#FFF8EC,#FFE6CC)"></div>
+ <div class="abs" style="left:240px;top:110px;width:1440px;height:780px;border-radius:40px;background:#FCEBD6;overflow:hidden"><div class="abs" style="left:520px;top:60px;width:400px;height:280px;border:16px solid #fff;border-radius:20px;background:#BFE6FF"><div class="abs" style="left:250px;top:40px;width:80px;height:80px;border-radius:50%;background:#FFD166;box-shadow:0 0 50px #FFD166"></div></div><div class="abs" style="left:0;top:620px;width:1440px;height:160px;background:#E2BE93"></div></div>
+ <div class="abs m8" style="left:700px;top:330px">${person(MOM,230)}</div>
+ <div class="abs d8" style="left:960px;top:300px">${person(DAU,240)}</div>
+ ${[0,1,2,3,4].map(i=>`<div class="abs ht" style="left:${880+((i*97)%220)-60}px;top:300px;font-size:${40+i%3*14}px;color:${['#E5484D','#FF7A8A','#F49A8A'][i%3]};opacity:0">♥</div>`).join('')}
+ <div class="abs c8" style="left:1290px;top:300px;opacity:0"><div class="card" style="width:340px;box-shadow:0 20px 40px rgba(0,0,0,.12)"><div style="display:flex;align-items:center;gap:12px">${logo(44)}<b style="font-size:22px">오늘도 괜찮아요</b></div><div style="display:flex;align-items:center;gap:12px;margin-top:16px"><div class="light" style="background:#22B07D"></div><div style="font-size:19px;font-weight:700;color:#46525F">첫 신호 07:02 · 4회</div></div></div></div>`,
+ (t,R)=>{tf(q(R,'.m8'),{y:Math.sin(t*2)*4});tf(q(R,'.d8'),{y:Math.sin(t*2+1)*4,r:-4});
+  qa(R,'.ht').forEach((h,i)=>{const s=.8+i*.7;const p=clamp((t-s)/3);tf(h,{y:-260*p,x:Math.sin(p*6+i)*20,o:p>0&&p<1?Math.sin(p*Math.PI):0})});
+  tf(q(R,'.c8'),{y:L(t,1.2,1.8,30,0,E.back),o:P(t,1.2,1.6)})});
+
+/* S9 outro 114-122 */
+scene(114,122,`<div class="abs full" style="background:linear-gradient(140deg,#25B985,#128C64)"></div>
+ <div class="abs lg9" style="left:870px;top:110px"><div style="background:#fff;border-radius:44px;padding:16px">${logo(148)}</div></div>
+ <div class="abs ctr o1" style="top:330px;font-size:130px;font-weight:900;color:#fff;letter-spacing:-3px">하루안부</div>
+ <div class="abs ctr o2" style="top:520px;font-size:46px;font-weight:700;color:#E6FFF4">화장실 문이 전하는 부모님 안부</div>
+ <div class="abs ctr o3" style="top:630px;display:flex;justify-content:center;gap:26px">${['누르지 않아도','카메라 없이','가족이 함께'].map(s=>`<div class="pill pp" style="font-size:32px;padding:16px 36px;color:#128C64">${s}</div>`).join('')}</div>
+ <div class="abs ctr o4" style="top:780px;font-size:36px;font-weight:700;color:#fff">App Store · Google Play 출시 예정</div>
+ <div class="abs ctr o5" style="top:990px;font-size:22px;color:#BDEBD8;font-weight:500">하루안부는 응급구조 서비스가 아닙니다. 긴급 상황에는 119에 연락하세요.</div>`,
+ (t,R)=>{tf(q(R,'.lg9'),{s:L(t,.2,1,0,1,E.back),o:P(t,.2,.5)});tf(q(R,'.o1'),{y:L(t,.7,1.4,40,0,E.out),o:P(t,.7,1.2)});tf(q(R,'.o2'),{y:L(t,1.2,1.9,30,0,E.out),o:P(t,1.2,1.7)});
+  qa(R,'.pp').forEach((p,i)=>tf(p,{y:L(t,1.9+i*.25,2.5+i*.25,30,0,E.back),o:P(t,1.9+i*.25,2.3+i*.25)}));op(q(R,'.o4'),P(t,3,3.5));op(q(R,'.o5'),P(t,3.6,4.1))},{noOut:true});
+
+/* captions */
+const CAPS=[[8.5,13,'혼자 사시는 어머니, 오늘은 괜찮으실까?'],[13.3,18.6,'매일 전화하긴 바쁘고, 카메라는 어머니가 불편해하세요'],
+ [19.6,25.2,'주말에 어머니 댁에 들러 화장실 문에 센서를 붙였어요'],[25.5,31.6,'앱에서 와이파이를 연결하고, 문을 한 번 열어 테스트'],[31.9,37.6,'어머니 폰에는 가족 코드만 입력하면 끝'],
+ [38.6,45.6,'어머니는 평소처럼 생활하시면 돼요'],[46,53.2,'문이 열릴 때마다 조용히 안부가 도착합니다'],[53.5,60.6,'버튼도, 카메라도 없이 하루가 초록불로 채워져요'],
+ [61.6,69.6,'한 달 기록으로 어머니의 생활 리듬을 한눈에'],[70.6,78.6,'여행이나 입원 중엔 외출 모드로 알림을 쉬어요'],
+ [82.6,88.4,'오전 7시 10분 이후, 화장실 문이 열리지 않았어요'],[88.7,93.6,'8시간째 신호 없음. 먼저 어머니 폰이 안부를 묻고'],[93.9,100.4,'응답이 없자 딸에게, 그리고 옆집 이모님께'],[100.7,106.6,'40분 만에 이웃이 찾아가 119에 연락했어요'],
+ [107.6,113.6,'다행히 어머니는 금방 회복하셨어요. 오늘도 초록불이에요']];
+const cap=document.getElementById('cap');
+function seek(t){scenes.forEach(s=>{const v=t>=s.a&&t<s.b+(s.opt.noOut?100:0);s.el.style.display=v?'block':'none';if(v){s.el.style.opacity=s.opt.noOut?P(t,s.a,s.a+.4,E.lin):fio(t,s.a,s.b,.4);s.upd(t-s.a,s.el)}});
+ const c=CAPS.find(c=>t>=c[0]&&t<c[1]);if(c){cap.textContent=c[2];tf(cap,{y:L(t,c[0],c[0]+.35,20,0,E.out),o:Math.min(P(t,c[0],c[0]+.3,E.lin),1-P(t,c[1]-.3,c[1],E.lin))})}else op(cap,0)}
+window.DURATION=122;window.seek=seek;
+document.fonts.ready.then(()=>{window.READY=true});
+const qs=new URLSearchParams(location.search);if(qs.has('t'))seek(+qs.get('t'));
+</script></body></html>
